@@ -1,0 +1,11 @@
+{
+    "data-root": "/product/docker"
+    "hosts": ["tcp://127.0.0.1:2376", "unix:///var/run/docker.sock"]
+    "log-driver": "local",
+    "log-opts": {
+        "max-file": "5",
+        "max-size": "100m"
+        "compress": "true"
+    },
+
+}

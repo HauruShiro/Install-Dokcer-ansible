@@ -1,0 +1,38 @@
+---
+- name: "Setup Redhat"
+  ansible.builtin.include_tasks: "setup-RedHat.yml"
+  # when: ansible_os_family == 'RedHat'
+
+- name: "Delete some repositories"
+  become_user: "root"
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "absent"
+  with_items:
+    - "/etc/yum.repos.d/CentOS-Base.repo"
+    - "/etc/yum.repos.d/CentOS-Media.repo"
+
+- name: "Install Docker."
+  ansible.builtin.package:
+    name: "{{ docker_package }}"
+    state: "{{ docker_package_state }}"
+  notify: "restart docker"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: "Copy daemon.json file"
+  ansible.builtin.copy:
+    src: "files/daemon.json"
+    dest: "/etc"
+  notify: "restart docker"
+
+- name: "Ensure Docker is started and enabled at boot."
+  ansible.builtin.service:
+    name: "docker"
+    state: "{{ docker_service_state }}"
+    enabled: "{{ docker_service_enabled }}"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: "Install docker"
+  ansible.builtin.include_tasks: "docker-compose.yml"
+  when: "docker_install_compose | bool"

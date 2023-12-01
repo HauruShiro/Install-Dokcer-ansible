@@ -1,0 +1,27 @@
+---
+# Edition can be one of: 'ce' (Community Edition) or 'ee' (Enterprise Edition).
+docker_edition: 'ce'
+docker_package: "docker-{{ docker_edition }}"
+docker_package_state: "present"
+
+# Service options.
+docker_service_state: "started"
+docker_service_enabled: true
+docker_restart_handler_state: "restarted"
+
+
+# Used only for RedHat/CentOS/Fedora.
+docker_repo_url: "https://download.docker.com/linux"
+docker_yum_repo_url: "{{ docker_repo_url }}/{{ (ansible_distribution == 'Fedora') | ternary('fedora', 'centos') }}/docker-{{ docker_edition }}.repo"
+docker_yum_repo_enable_nightly: '0'
+docker_yum_repo_enable_test: '0'
+docker_yum_gpg_key: "{{ docker_repo_url }}/fedora/gpg"
+docker_packges:
+  - "docker-ce"
+  - "docker-ce-cli"
+  - "containerd.io"
+# Docker Compose options.
+docker_install_compose: true
+docker_compose_version: "2.5.0"
+docker_compose_url: "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+docker_compose_path: "/usr/local/bin/docker-compose"
